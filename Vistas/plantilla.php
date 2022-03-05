@@ -223,7 +223,7 @@ session_start();
 
                                echo '{
                                       id: '.$value["id"].',
-                                      title:  "'.$value["nombre_paciente"].'",
+                                      title:  "'.$value["nyaP"].'",
                                       start:"'.$value["inicio"].'",
                                       end:"'.$value["fin"].'"
                                     },';
@@ -232,7 +232,7 @@ session_start();
 
                                echo '{
                                       id: '.$value["id"].',
-                                      title:  "'.$value["nombre_paciente"].'",
+                                      title:  "'.$value["nyaP"].'",
                                       start:"'.$value["inicio"].'",
                                       end:"'.$value["fin"].'"
                                     },';
@@ -297,11 +297,11 @@ session_start();
             
                 $('#fechaC').val(dia);
                 
-                  $('#horaC').val(fff+":00:00");
+                $('#horaC').val(fff+":00:00");
 
-                   $('#fyhC').val(fecha[0]+" "+fff+":00:00");
+                $('#fyhC').val(fecha[0]+" "+fff+":00:00");
 
-                 $('#horaFinC').val(fecha[0]+" "+horaFinal+":00:00");
+                $('#horaFinC').val(fecha[0]+" "+horaFinal+":00:00");
                 
               }
 
