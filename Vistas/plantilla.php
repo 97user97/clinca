@@ -204,9 +204,14 @@ session_start();
                 
             $('#calendar').fullCalendar({
               
-              hiddenDays: [0,6], 
+             hiddenDays: [0,6],
 
-              defaultView: 'agendaWeek',
+              header:{
+                left: 'today, prev, next',
+                center:'title',
+                right:'month, agendaWeek, agendaDay' },
+
+                defaultView: 'agendaWeek',
 
               events:[
 
@@ -278,6 +283,8 @@ session_start();
 
               dayClick:function(date,jsEvent,view){
 
+                $('#CitaModal').modal();
+
                 var fecha = date.format();
 
                 var hora2 = ("01:00:00").split(":");
@@ -288,20 +295,18 @@ session_start();
 
                 var hora = (fecha[1]).split(":");
 
-                var fff = parseFloat(hora[0]);
-                var ggg = parseFloat(hora2[0]);
+                var h1 = parseFloat(hora[0]);
+                var h2 = parseFloat(hora2[0]);
 
-                var horaFinal = fff+ggg;
-
-                $('#CitaModal').modal();
+                var horaFinal = h1+h2;
             
                 $('#fechaC').val(dia);
                 
-                $('#horaC').val(fff+":00:00");
+                $('#horaC').val(h1+":00:00");
 
-                $('#fyhC').val(fecha[0]+" "+fff+":00:00");
+                $('#fyhIC').val(fecha[0]+" "+h1+":00:00");
 
-                $('#horaFinC').val(fecha[0]+" "+horaFinal+":00:00");
+                $('#fyhFC').val(fecha[0]+" "+horaFinal+":00:00");
                 
               }
 
