@@ -125,7 +125,7 @@ if($_SESSION["id"] != substr($_GET["url"], 6)){
 
 									foreach ($resultado as $key => $value) {
 										
-										echo '<option value="'.$value["nombre"].' '.$value["apellido"].'">'.$value["apellido"].' '.$value["nombre"].'</option>';
+										echo '<option value="'.$value["nombre"].' '.$value["apellido"].'">'.$value["nombre"].' '.$value["apellido"].'</option>';
 
 									}
 
@@ -178,7 +178,7 @@ if($_SESSION["id"] != substr($_GET["url"], 6)){
 					
 					<button type="submit" class="btn btn-primary">Pedir Cita</button>
 
-					<button type="button" class="btn btn-danger">Cancelar</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
 
 				</div>
 
