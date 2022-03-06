@@ -1,306 +1,319 @@
 <?php
 
-if($_SESSION["rol"] != "Secretaria" && $_SESSION["rol"] != "Doctor" && $_SESSION["rol"] != "Administrador"){
-
-	echo '<script>
-
-	window.location = "inicio";
-	</script>';
-
-	return;
-
-}
+class PacientesC{
 
 
-?>
+	//Crear Pacientes
+	public function CrearPacienteC(){
 
-<div class="content-wrapper">
-	
-	<section class="content-header">
+			if(isset($_POST["rolP"])){
 
-		
-		<h1>Gestor de Pacientes</h1>
+				$tablaBD = "pacientes";
 
-	</section>
+				$datosC = array("apellido"=>$_POST["apellido"], "nombre"=>$_POST["nombre"], "documento"=>$_POST["documento"], "usuario"=>$_POST["usuario"], "clave"=>$_POST["clave"], "rol"=>$_POST["rolP"]);
 
-	<section class="content">
+				$resultado = PacientesM::CrearPacienteM($tablaBD, $datosC);
 
-		
-		<div class="box">
-			
-			<div class="box-header">
-				
-				<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#CrearPaciente">Crear Paciente</button>
-				
-			</div>
+				if($resultado == true){
 
 
-			<div class="box-body">
-				
-				<table class="table table-bordered table-hover table-striped DT">
+					echo '<script>
+
+					window.location = "pacientes";
+					</script>';
+
+				}
+
+		}
+
+	}
+
+
+
+	//Ver Pacientes
+	static public function VerPacientesC($columna, $valor){
+
+				$tablaBD = "pacientes";
+
+				$resultado = PacientesM::VerPacientesM($tablaBD, $columna, $valor);
+
+				return $resultado;
+
+	}
+
+
+
+	//Borrar Paciente
+	public function BorrarPacienteC(){
+
+			if(isset($_GET["Pid"])){
+
+				$tablaBD = "pacientes";
+
+				$id = $_GET["Pid"];
+
+				if($_GET["imgP"] != ""){
+
+					unlink($_GET["imgP"]);
+
+			}
+
+			$resultado = PacientesM::BorrarPacienteM($tablaBD, $id);
+
+			if($resultado == true){
+
+				echo '<script>
+
+				window.location = "pacientes";
+				</script>';
+
+			}
+
+		}
+
+	}
+
+
+
+	//Actualizar Paciente
+	public function ActualizarPacienteC(){
+
+				if(isset($_POST["Pid"])){
+
+					$tablaBD = "pacientes";
+
+					$datosC = array("id"=>$_POST["Pid"], "apellido"=>$_POST["apellidoE"], "nombre"=>$_POST["nombreE"], "documento"=>$_POST["documentoE"], "usuario"=>$_POST["usuarioE"], "clave"=>$_POST["claveE"]);
+
+					$resultado = PacientesM::ActualizarPacienteM($tablaBD, $datosC);
 					
-					<thead>
+					if($resultado == true){
+
+						echo '<script>
+
+						window.location = "pacientes";
+						</script>';
+
+					}
+
+		}
+
+	}
+
+
+	//Ingreso de los Pacientes
+	public function IngresarPacienteC(){
+
+			if(isset($_POST["usuario-Ing"])){
+
+				if(preg_match('/^[a-zA-Z0-9]+$/', $_POST["usuario-Ing"]) && preg_match('/^[a-zA-Z0-9]+$/', $_POST["clave-Ing"])){
+
+					$tablaBD = "pacientes";
+
+					$datosC = array("usuario"=>$_POST["usuario-Ing"], "clave"=>$_POST["clave-Ing"]);
+
+					$resultado = PacientesM::IngresarPacienteM($tablaBD, $datosC);
+
+					if($resultado["usuario"] == $_POST["usuario-Ing"] && $resultado["clave"] == $_POST["clave-Ing"]){
+
+
+						$_SESSION["Ingresar"] = true;
+
+						$_SESSION["id"] = $resultado["id"];
+						$_SESSION["usuario"] = $resultado["usuario"];
+						$_SESSION["clave"] = $resultado["clave"];
+						$_SESSION["apellido"] = $resultado["apellido"];
+						$_SESSION["nombre"] = $resultado["nombre"];
+						$_SESSION["documento"] = $resultado["documento"];
+						$_SESSION["foto"] = $resultado["foto"];
+						$_SESSION["rol"] = $resultado["rol"];
+
+						echo '<script>
+
+						window.location = "inicio";
+						</script>';
+
+					}
+
+				}
+
+		}
+
+	}
+
+
+
+
+	//Ver perfil del paciente
+	public function VerPerfilPacienteC(){
+
+				$tablaBD = "pacientes";
+
+				$id = $_SESSION["id"];
+
+				$resultado = PacientesM::VerPerfilPacienteM($tablaBD, $id);
+
+				echo '<tr>
 						
-						<tr>
-							
-							<th>N°</th>
-							<th>Apellido</th>
-							<th>Nombre</th>
-							<th>Documento</th>
-							<th>Foto</th>
-							<th>Usuario</th>
-							<th>Contraseña</th>
-							<th>Editar / Borrar</th>
+						<td>'.$resultado["usuario"].'</td>
+						<td>'.$resultado["clave"].'</td>
+						<td>'.$resultado["nombre"].'</td>
+						<td>'.$resultado["apellido"].'</td>';
 
-						</tr>
+						if($resultado["foto"] == ""){
 
-					</thead>
+							echo '<td><img src="Vistas/img/defecto.png" width="40px"></td>';
 
-					<tbody>
+						}else{
 
-						<?php
-
-						$columna = null;
-						$valor = null;
-
-						$resultado = PacientesC::VerPacientesC($columna, $valor);
-
-						foreach ($resultado as $key => $value) {
-							
-							echo '<tr>
-
-					
-									<td>'.($key+1).'</td>
-									<td>'.$value["apellido"].'</td>
-									<td>'.$value["nombre"].'</td>
-									<td>'.$value["documento"].'</td>';
-
-									if($value["foto"] == ""){
-
-										echo '<td><img src="Vistas/img/defecto.png" width="40px"></td>';
-
-									}else{
-
-										echo '<td><img src="'.$value["foto"].'" width="40px"></td>';
-
-									}
-									
-
-									echo '<td>'.$value["usuario"].'</td>
-
-									<td>'.$value["clave"].'</td>
-
-									<td>
-										
-										<div class="btn-group">
-
-											
-											
-											<button class="btn btn-success EditarPaciente" Pid="'.$value["id"].'" data-toggle="modal" data-target="#EditarPaciente"><i class="fa fa-pencil"></i> Editar</button>
-											
-											<button class="btn btn-danger EliminarPaciente" Pid="'.$value["id"].'" imgP="'.$value["foto"].'"><i class="fa fa-times"></i> Borrar</button>
-											
-
-										</div>
-
-									</td>
-
-								</tr>';
+							echo '<td><img src="'.$resultado["foto"].'" width="40px"></td>';
 
 						}
-
-						?>
-
-
-
-					</tbody>
-
-				</table>
-
-			</div>
-
-
-		</div>
-
-	</section>
-
-</div>
-
-
-
-<div class="modal fade" rol="dialog" id="CrearPaciente">
-	
-	<div class="modal-dialog">
-		
-
-		<div class="modal-content">
-			
-			<form method="post" role="form">
-				
-			<div class="modal-body">
-					
-				<div class="box-body">
 						
 
-					<div class="form-group">
+						echo '<td>'.$resultado["documento"].'</td>
+
+						<td>
 							
-							<h2>Apellido:</h2>
+							<a href="http://localhost/clinica/perfil-P/'.$resultado["id"].'">
+								<button class="btn btn-success"><i class="fa fa-pencil"></i></button>
+							</a>
 
-							<input type="text" class="form-control input-lg" name="apellido" required>
+						</td>
 
-							<input type="hidden" name="rolP" value="Paciente">
+					</tr>';
 
-						</div>
+			}
 
-						<div class="form-group">
+
+
+	//Editar Perfil Paceinte
+	public function EditarPerfilPacienteC(){
+
+				$tablaBD = "pacientes";
+
+				$id = $_SESSION["id"];
+
+				$resultado = PacientesM:: VerPerfilPacienteM($tablaBD, $id);
+
+				echo '<form method="post" enctype="multipart/form-data">
 							
-							<h2>Nombre:</h2>
+							<div class="row">
+								
+								<div class="col-md-6 col-xs-12">
+									
+									<h2>Nombre:</h2>
+									<input type="text" class="input-lg" name="nombrePerfil" value="'.$resultado["nombre"].'">
+									<input type="hidden" class="input-lg" name="Pid" value="'.$resultado["id"].'">
 
-						<input type="text" class="form-control input-lg" name="nombre" required>
+									<h2>Apellido:</h2>
+									<input type="text" class="input-lg" name="apellidoPerfil" value="'.$resultado["apellido"].'">
 
-						</div>
+									<h2>Usuario:</h2>
+									<input type="text" class="input-lg" name="usuarioPerfil" value="'.$resultado["usuario"].'">
 
-						<div class="form-group">
-							
-							<h2>Documento:</h2>
+									<h2>Clave:</h2>
+									<input type="text" class="input-lg" name="clavePerfil" value="'.$resultado["clave"].'">
 
-							<input type="text" class="form-control input-lg" name="documento" required>
+									<h2>Documento:</h2>
+									<input type="text" class="input-lg" name="documentoPerfil" value="'.$resultado["documento"].'">
 
-						</div>
+								</div>
 
-						<div class="form-group">
-							
-							<h2>Usuario:</h2>
+								<div class="col-md-6 col-xs-12">
+									
+									<br><br>
 
-						<input type="text" class="form-control input-lg" id="usuario" name="usuario" required>
+								<input type="file" name="imgPerfil">
+								<br>';
 
-						</div>
+									if($resultado["foto"] != ""){
 
-						<div class="form-group">
-							
-						<h2>Contraseña:</h2>
+						echo '<img src="http://localhost/clinica/'.$resultado["foto"].'" width="200px" class="img-responsive">';
 
-						<input type="text" class="form-control input-lg" name="clave" required>
+									}else {
 
-						</div>
+									echo '<img src="http://localhost/clinica/Vistas/img/defecto.png" width="200px" class="img-responsive">';
 
-					</div>
-
-				</div>
-
-
-				<div class="modal-footer">
-					
-					<button type="submit" class="btn btn-primary">Crear</button>
-
-					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-
-				</div>
-
-				<?php
-
-				$crear = new PacientesC();
-				$crear -> CrearPacienteC();
-
-				?>
-
-			</form>
-
-		</div>
+									}
 
 
-	</div>
+									echo '<input type="hidden" name="imgActual" value="'.$resultado["foto"].'">
 
-</div>
+									<br><br>
 
+									<button type="submit" class="btn btn-success">Guardar Cambios</button>
 
-<div class="modal fade" rol="dialog" id="EditarPaciente">
-	
-	<div class="modal-dialog">
-		
-		<div class="modal-content">
-			
-			<form method="post" role="form">
-				
-				<div class="modal-body">
-					
-					<div class="box-body">
-						
-						<div class="form-group">
-							
-							<h2>Apellido:</h2>
+								</div>
 
-							<input type="text" class="form-control input-lg" id="apellidoE" name="apellidoE" required>
+							</div>
 
-							<input type="hidden" id="Pid" name="Pid">
+						</form>';
 
-						</div>
-
-						<div class="form-group">
-							
-							<h2>Nombre:</h2>
-
-							<input type="text" class="form-control input-lg" id="nombreE" name="nombreE" required>
-
-						</div>
-
-						<div class="form-group">
-							
-							<h2>Documento:</h2>
-
-							<input type="text" class="form-control input-lg" id="documentoE" name="documentoE" required>
-
-						</div>
-
-						<div class="form-group">
-							
-							<h2>Usuario:</h2>
-
-							<input type="text" class="form-control input-lg" id="usuarioE" name="usuarioE" required>
-
-						</div>
-
-						<div class="form-group">
-							
-							<h2>Contraseña:</h2>
-
-							<input type="text" class="form-control input-lg" id="claveE" name="claveE" required>
-
-						</div>
-
-					</div>
-
-				</div>
-
-
-				<div class="modal-footer">
-
-					
-					<button type="submit" class="btn btn-success">Guardar Cambios</button>
-
-					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-
-				</div>
-
-				<?php
-
-				$actualizar = new PacientesC();
-				$actualizar -> ActualizarPacienteC();
-
-				?>
-
-			</form>
-
-		</div>
-
-	</div>
-
-</div>
+	}
 
 
 
 
-<?php
+	//Actualizar Perfil del Paciente
+	public function ActualizarPerfilPacienteC(){
 
-$borrarP = new PacientesC();
-$borrarP -> BorrarPacienteC();
+		if(isset($_POST["Pid"])){
+
+			$rutaImg = $_POST["imgActual"];
+
+			if(isset($_FILES["imgPerfil"]["tmp_name"]) && !empty($_FILES["imgPerfil"]["tmp_name"])){
+
+				if(!empty($_POST["imgActual"])){
+
+					unlink($_POST["imgActual"]);
+
+				}
+
+
+				if($_FILES["imgPerfil"]["type"] == "image/png"){
+
+					$nombre = mt_rand(100,999);
+
+					$rutaImg = "Vistas/img/Pacientes/Paciente".$nombre.".png";
+
+					$foto = imagecreatefrompng($_FILES["imgPerfil"]["tmp_name"]);
+
+					imagepng($foto, $rutaImg);
+
+				}
+
+				if($_FILES["imgPerfil"]["type"] == "image/jpeg"){
+
+					$nombre = mt_rand(100,999);
+
+					$rutaImg = "Vistas/img/Pacientes/Paciente".$nombre.".jpg";
+
+					$foto = imagecreatefromjpeg($_FILES["imgPerfil"]["tmp_name"]);
+
+					imagejpeg($foto, $rutaImg);
+
+				}
+
+			}
+
+			$tablaBD = "pacientes";
+
+			$datosC = array("id"=>$_POST["Pid"], "nombre"=>$_POST["nombrePerfil"], "apellido"=>$_POST["apellidoPerfil"], "usuario"=>$_POST["usuarioPerfil"], "clave"=>$_POST["clavePerfil"], "documento"=>$_POST["documentoPerfil"], "foto"=>$rutaImg);
+
+			$resultado = PacientesM::ActualizarPerfilPacienteM($tablaBD, $datosC);
+
+			if($resultado == true){
+
+				echo '<script>
+
+				window.location = "http://localhost/clinica/perfil-P/'.$_SESSION["id"].'";
+				</script>';
+
+			}
+
+		}
+
+	}
+
+
+}
