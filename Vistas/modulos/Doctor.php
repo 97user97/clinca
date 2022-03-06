@@ -147,9 +147,9 @@ if($_SESSION["rol"] != "Paciente"){
 						<div class="form-group">
 							
 							
-							<input type="hidden" class="form-control input-lg" name="fyhIC" id="fyhIC" value="" readonly>
+							<input type="text" class="form-control input-lg" name="fyhIC" id="fyhIC" value="" readonly>
 
-							<input type="hidden" class="form-control input-lg" name="fyhFC" id="fyhFC" value="" readonly>
+							<input type="text" class="form-control input-lg" name="fyhFC" id="fyhFC" value="" readonly>
 
 						</div>
 
@@ -161,7 +161,7 @@ if($_SESSION["rol"] != "Paciente"){
 					
 					<button type="submit" class="btn btn-primary">Pedir Cita</button>
 
-					<button type="button" class="btn btn-danger" data-dismiss="modal">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
 
 				</div>
 
@@ -179,4 +179,6 @@ if($_SESSION["rol"] != "Paciente"){
 	</div>
 
 </div>
+
+
 
