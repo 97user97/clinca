@@ -165,6 +165,7 @@ class DoctoresC{
 				
 				<td>'.$resultado["usuario"].'</td>
 				<td>'.$resultado["clave"].'</td>
+				<td>'.$resultado["sexo"].'</td>
 				<td>'.$resultado["nombre"].'</td>
 				<td>'.$resultado["apellido"].'</td>';
 
